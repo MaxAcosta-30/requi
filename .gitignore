@@ -1,0 +1,14 @@
+software-maestro*.md
+bin/
+obj/
+node_modules/
+.env
+.env.*
+*.pfx
+*.pem
+.vs/
+.idea/
+.angular/
+dist/
+coverage/
+TestResults/
