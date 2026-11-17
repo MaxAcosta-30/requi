@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Requi.DbMigrator/Requi.DbMigrator.csproj" />
+    <Project Path="src/Requi.Domain/Requi.Domain.csproj" />
+    <Project Path="src/Requi.Infrastructure/Requi.Infrastructure.csproj" />
+  </Folder>
+</Solution>
