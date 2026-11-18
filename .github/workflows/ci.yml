@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+      - run: dotnet restore Requi.slnx
+      - run: dotnet build Requi.slnx -c Release --no-restore
+      - run: dotnet test Requi.slnx -c Release --no-build
+      - name: El contrato OpenAPI está al día
+        # status, no diff: también detecta archivos nuevos sin seguimiento.
+        run: git status --porcelain openapi/ | tee /dev/stderr | (! grep -q .)
+
+  database:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: requi
+          POSTGRES_USER: requi
+          POSTGRES_PASSWORD: requi_ci
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U requi -d requi"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      ConnectionStrings__Migrations: Host=localhost;Port=5432;Database=requi;Username=requi;Password=requi_ci
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+      - name: Aplicar scripts SQL
+        run: dotnet run --project src/Requi.DbMigrator
+      - name: Regenerar el scaffold
+        run: database/scaffold.sh
+      - name: El scaffold coincide con el código
+        run: git status --porcelain src/ | tee /dev/stderr | (! grep -q .)
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - run: npx ng test --watch=false
