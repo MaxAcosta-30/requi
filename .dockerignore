@@ -1,0 +1,8 @@
+**/bin/
+**/obj/
+web/
+tests/
+docs/
+.git/
+.github/
+*.md
