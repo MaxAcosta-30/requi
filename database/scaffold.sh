@@ -17,6 +17,8 @@ args=()
 for t in "${tables[@]}"; do args+=(--table "$t"); done
 
 dotnet tool restore >/dev/null
+# dotnet ef compila sin restaurar paquetes: en una máquina limpia hay que hacerlo antes.
+dotnet restore src/Requi.Infrastructure >/dev/null
 dotnet ef dbcontext scaffold "$ConnectionStrings__Migrations" Npgsql.EntityFrameworkCore.PostgreSQL \
   --project src/Requi.Infrastructure \
   --context RequiDbContext \
