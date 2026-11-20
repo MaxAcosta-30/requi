@@ -74,6 +74,8 @@ public static class IdentidadServicios
                     .SetEndSessionEndpointUris("connect/logout");
 
                 o.AllowAuthorizationCodeFlow().RequireProofKeyForCodeExchange();
+                // Solo S256: con "plain" el reto es el mismo verificador y PKCE no protege nada.
+                o.Configure(opciones => opciones.CodeChallengeMethods.Remove(CodeChallengeMethods.Plain));
                 o.AllowRefreshTokenFlow();
 
                 o.SetAccessTokenLifetime(TimeSpan.FromMinutes(10));

@@ -61,6 +61,13 @@ await SemillaIdentidad.EjecutarAsync(
     redirecciones,
     Uris("Oidc__RedireccionesSalida"));
 Console.WriteLine($"Semilla de identidad aplicada ({redirecciones.Count} URL de redirección).");
+
+// Usuarios de demo (caso 9): solo si se da su contraseña; nunca va en el repositorio.
+if (Environment.GetEnvironmentVariable("Demo__Clave") is { Length: > 0 } claveDemo)
+{
+    await SemillaIdentidad.UsuariosDemoAsync(scope.ServiceProvider.GetRequiredService<UserManager<Usuario>>(), claveDemo);
+    Console.WriteLine("Usuarios de demo listos.");
+}
 return 0;
 
 static List<Uri> Uris(string variable) =>

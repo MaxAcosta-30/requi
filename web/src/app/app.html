@@ -14,5 +14,23 @@
   @if (api.status() === 'unavailable') {
     <button type="button" class="mt-3 rounded border px-3 py-2" (click)="api.check()">Reintentar</button>
   }
+
+  @if (sesion.estado() === 'lista') {
+    <section class="mt-6" aria-label="Sesión">
+      @if (sesion.usuario(); as usuario) {
+        <p>
+          Sesión de <strong>{{ usuario.nombre }}</strong> ({{ usuario.correo }})
+          · {{ usuario.roles.join(', ') || 'sin rol' }}
+        </p>
+        <button type="button" class="mt-3 rounded border px-3 py-2" (click)="sesion.cerrarSesion()">
+          Cerrar sesión
+        </button>
+      } @else {
+        <button type="button" class="rounded border px-3 py-2" (click)="sesion.iniciarSesion()">
+          Iniciar sesión
+        </button>
+      }
+    </section>
+  }
 </main>
 <router-outlet />

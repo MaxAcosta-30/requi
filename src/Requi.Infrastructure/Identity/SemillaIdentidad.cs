@@ -60,4 +60,24 @@ public static class SemillaIdentidad
         if (existente is null) await aplicaciones.CreateAsync(descriptor, ct);
         else await aplicaciones.UpdateAsync(existente, descriptor, ct);
     }
+
+    /// <summary>Caso 9: un usuario de demo por rol (solicitante@demo.requi, etc.). Idempotente.</summary>
+    public static async Task UsuariosDemoAsync(UserManager<Usuario> usuarios, string clave)
+    {
+        foreach (var rol in Roles.Todos)
+        {
+            var correo = $"{rol.ToLowerInvariant()}@demo.requi";
+            var usuario = await usuarios.FindByEmailAsync(correo);
+            if (usuario is null)
+            {
+                usuario = new Usuario { UserName = correo, Email = correo, EmailConfirmed = true, NombreCompleto = $"{rol} de demo" };
+                var creado = await usuarios.CreateAsync(usuario, clave);
+                if (!creado.Succeeded)
+                {
+                    throw new InvalidOperationException(string.Join(" ", creado.Errors.Select(e => e.Description)));
+                }
+            }
+            if (!await usuarios.IsInRoleAsync(usuario, rol)) await usuarios.AddToRoleAsync(usuario, rol);
+        }
+    }
 }

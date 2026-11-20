@@ -48,6 +48,20 @@ public class IdentidadTests(ApiConBase api) : IClassFixture<ApiConBase>
     }
 
     [Fact]
+    public async Task PKCE_plain_no_se_acepta_solo_S256()
+    {
+        var flujo = new FlujoOidc(api);
+        var (verificador, _) = FlujoOidc.Pkce();
+        var url = FlujoOidc.UrlAutorizar(verificador).Replace("code_challenge_method=S256", "code_challenge_method=plain");
+
+        var respuesta = await flujo.Navegador.GetAsync(url, TestContext.Current.CancellationToken);
+
+        var destino = respuesta.Headers.Location?.ToString() ?? await respuesta.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+        Assert.DoesNotContain("/cuenta/login", destino);
+        Assert.Contains("code_challenge_method", destino);
+    }
+
+    [Fact]
     public async Task El_codigo_no_se_canjea_con_un_verificador_distinto()
     {
         var flujo = new FlujoOidc(api);
