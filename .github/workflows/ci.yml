@@ -68,6 +68,10 @@ jobs:
           cache: npm
           cache-dependency-path: web/package-lock.json
       - run: npm ci
+      - name: El cliente del OpenAPI está al día
+        run: |
+          npm run api
+          git status --porcelain src/app/api | tee /dev/stderr | (! grep -q .)
       - run: npm run build
       - run: npx ng test --watch=false
 

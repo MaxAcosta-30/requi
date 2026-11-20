@@ -64,13 +64,15 @@ public static class SemillaIdentidad
     /// <summary>Caso 9: un usuario de demo por rol (solicitante@demo.requi, etc.). Idempotente.</summary>
     public static async Task UsuariosDemoAsync(UserManager<Usuario> usuarios, string clave)
     {
-        foreach (var rol in Roles.Todos)
+        // Un usuario por rol y un segundo aprobador: arriba de $20,000 se necesitan 2 firmas distintas.
+        var demo = Roles.Todos.Select(r => (Correo: $"{r.ToLowerInvariant()}@demo.requi", Rol: r))
+            .Append(("aprobador2@demo.requi", Roles.Aprobador));
+        foreach (var (correo, rol) in demo)
         {
-            var correo = $"{rol.ToLowerInvariant()}@demo.requi";
             var usuario = await usuarios.FindByEmailAsync(correo);
             if (usuario is null)
             {
-                usuario = new Usuario { UserName = correo, Email = correo, EmailConfirmed = true, NombreCompleto = $"{rol} de demo" };
+                usuario = new Usuario { UserName = correo, Email = correo, EmailConfirmed = true, NombreCompleto = correo.StartsWith("aprobador2") ? "Segundo aprobador de demo" : $"{rol} de demo" };
                 var creado = await usuarios.CreateAsync(usuario, clave);
                 if (!creado.Succeeded)
                 {

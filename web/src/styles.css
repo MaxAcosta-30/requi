@@ -1,4 +1,8 @@
 @import 'tailwindcss';
+/* Fuentes autoalojadas: no dependen de Google y caben en una CSP estricta. */
+@import '@fontsource-variable/public-sans';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/600.css';
 
 /* Dirección "Papel autocopiante" (docs/proyecto/07-diseno.md). */
 :root {
@@ -52,7 +56,7 @@
   --color-rosa: var(--rosa);
   --color-gris: var(--gris);
   --color-rojo: var(--rojo);
-  --font-sans: "Public Sans", system-ui, sans-serif;
+  --font-sans: "Public Sans Variable", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
@@ -60,4 +64,23 @@
   html { -webkit-font-smoothing: antialiased; }
   body { @apply bg-mesa text-tinta font-sans text-[15px] leading-normal; }
   :focus-visible { outline: 2px solid var(--carbon); outline-offset: 2px; border-radius: 3px; }
+}
+
+@utility hoja {
+  @apply bg-papel rounded-md shadow-[0_0_0_1px_rgba(29,31,36,.08),0_1px_2px_rgba(29,31,36,.06),0_4px_12px_-4px_rgba(29,31,36,.10)];
+}
+@utility boton {
+  @apply inline-flex items-center justify-center gap-2 min-h-11 px-4 rounded font-semibold text-sm transition-transform duration-150 active:scale-[.97] disabled:opacity-50 disabled:cursor-not-allowed;
+}
+@utility boton-primario {
+  @apply boton bg-carbon text-papel;
+}
+@utility boton-secundario {
+  @apply boton text-carbon ring-1 ring-inset ring-carbon/40 bg-transparent;
+}
+@utility campo {
+  @apply w-full min-h-11 rounded bg-mesa px-3 text-tinta ring-1 ring-inset ring-renglon focus:ring-2 focus:ring-carbon outline-none;
+}
+@utility cifra {
+  @apply font-mono tabular-nums;
 }

@@ -6,6 +6,10 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { of } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { environment } from '../environments/environment';
+import { TranslocoTestingModule } from '@jsverse/transloco';
+import { provideApiConfiguration } from './api/api-configuration';
+import en from '../../public/i18n/en.json';
+import es from '../../public/i18n/es.json';
 import { App } from './app';
 
 function oidcFalso(sesion: { isAuthenticated: boolean; userData: unknown }) {
@@ -18,11 +22,12 @@ function oidcFalso(sesion: { isAuthenticated: boolean; userData: unknown }) {
 
 async function crear(oidc: ReturnType<typeof oidcFalso>) {
   await TestBed.configureTestingModule({
-    imports: [App],
+    imports: [App, TranslocoTestingModule.forRoot({ langs: { es, en }, translocoConfig: { availableLangs: ['es', 'en'], defaultLang: 'es' } })],
     providers: [
       provideHttpClient(),
       provideHttpClientTesting(),
       provideRouter([]),
+      provideApiConfiguration(environment.apiUrl),
       { provide: OidcSecurityService, useValue: oidc },
     ],
   }).compileComponents();
@@ -64,6 +69,7 @@ describe('App', () => {
 
     expect(oidc.checkAuth).toHaveBeenCalledTimes(1);
     const boton = [...html().querySelectorAll('button')].find((b) => b.textContent?.includes('Iniciar sesión'));
+    expect(boton).toBeDefined();
     boton!.click();
     expect(oidc.authorize).toHaveBeenCalledTimes(1);
   });
@@ -78,9 +84,10 @@ describe('App', () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
-    const texto = html().querySelector('[aria-label=Sesión]')?.textContent ?? '';
+    const texto = html().querySelector('header')?.textContent ?? '';
     expect(texto).toContain('Ana Pérez');
     expect(texto).toContain('Aprobador');
-    expect(texto).toContain('Cerrar sesión');
+    expect(texto).toContain('Salir');
+    expect(texto).toContain('Por aprobar'); // la navegación depende del rol
   });
 });
