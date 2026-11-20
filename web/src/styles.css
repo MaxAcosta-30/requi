@@ -1,3 +1,63 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import 'tailwindcss';
+
+/* Dirección "Papel autocopiante" (docs/proyecto/07-diseno.md). */
+:root {
+  color-scheme: light;
+  --papel: #fbfaf6;        /* el original */
+  --mesa: #efece4;         /* el escritorio donde está la hoja */
+  --renglon: #e4e0d4;      /* líneas de la forma */
+  --tinta: #1d1f24;
+  --tinta-2: #4b4f58;
+  --tinta-3: #636874;      /* metadatos (≥ 4.5:1 sobre papel) */
+  --carbon: #27357e;       /* tinta del papel carbón: acciones y cifras */
+  --carbon-suave: #e6e8f4;
+  --canario: #f3e6a0;      /* copia "en firma" */
+  --menta: #cfe8d5;        /* copia aprobada */
+  --cielo: #d3e2f4;        /* copia en orden de compra */
+  --rosa: #f0caca;         /* copia rechazada */
+  --gris: #e2e1dd;         /* cancelada */
+  --rojo: #a3261e;         /* errores en texto */
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --papel: #1b1d22; --mesa: #121317; --renglon: #2c2f37;
+    --tinta: #ecebe6; --tinta-2: #bfc1c8; --tinta-3: #979ba5;
+    --carbon: #a9b4f2; --carbon-suave: #262c4a;
+    --canario: #4a4320; --menta: #23402c; --cielo: #223650; --rosa: #4c2626; --gris: #2c2d31;
+    --rojo: #ff9a8f;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --papel: #1b1d22; --mesa: #121317; --renglon: #2c2f37;
+  --tinta: #ecebe6; --tinta-2: #bfc1c8; --tinta-3: #979ba5;
+  --carbon: #a9b4f2; --carbon-suave: #262c4a;
+  --canario: #4a4320; --menta: #23402c; --cielo: #223650; --rosa: #4c2626; --gris: #2c2d31;
+  --rojo: #ff9a8f;
+}
+
+@theme inline {
+  --color-papel: var(--papel);
+  --color-mesa: var(--mesa);
+  --color-renglon: var(--renglon);
+  --color-tinta: var(--tinta);
+  --color-tinta-2: var(--tinta-2);
+  --color-tinta-3: var(--tinta-3);
+  --color-carbon: var(--carbon);
+  --color-carbon-suave: var(--carbon-suave);
+  --color-canario: var(--canario);
+  --color-menta: var(--menta);
+  --color-cielo: var(--cielo);
+  --color-rosa: var(--rosa);
+  --color-gris: var(--gris);
+  --color-rojo: var(--rojo);
+  --font-sans: "Public Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+@layer base {
+  html { -webkit-font-smoothing: antialiased; }
+  body { @apply bg-mesa text-tinta font-sans text-[15px] leading-normal; }
+  :focus-visible { outline: 2px solid var(--carbon); outline-offset: 2px; border-radius: 3px; }
+}

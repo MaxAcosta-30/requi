@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Requi · Prototipo de diseño (Papel autocopiante)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.5"></script>
+<style>
+/* Tokens del mundo de la requisición en papel autocopiante. Se copian tal cual a web/src/styles.css. */
+:root {
+  color-scheme: light;
+  --papel: #fbfaf6;        /* el original */
+  --mesa: #efece4;         /* el escritorio donde está la hoja */
+  --renglon: #e4e0d4;      /* líneas de la forma */
+  --tinta: #1d1f24;
+  --tinta-2: #4b4f58;
+  --tinta-3: #636874;      /* metadatos (≥ 4.5:1 sobre papel) */
+  --carbon: #27357e;       /* tinta del papel carbón: acciones y cifras */
+  --carbon-suave: #e6e8f4;
+  --canario: #f3e6a0;      /* copia "en firma" */
+  --menta: #cfe8d5;        /* copia aprobada */
+  --cielo: #d3e2f4;        /* copia en orden de compra */
+  --rosa: #f0caca;         /* copia rechazada */
+  --gris: #e2e1dd;         /* cancelada */
+  --rojo: #a3261e;         /* errores en texto */
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --papel: #1b1d22; --mesa: #121317; --renglon: #2c2f37;
+    --tinta: #ecebe6; --tinta-2: #bfc1c8; --tinta-3: #979ba5;
+    --carbon: #a9b4f2; --carbon-suave: #262c4a;
+    --canario: #4a4320; --menta: #23402c; --cielo: #223650; --rosa: #4c2626; --gris: #2c2d31;
+    --rojo: #ff9a8f;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --papel: #1b1d22; --mesa: #121317; --renglon: #2c2f37;
+  --tinta: #ecebe6; --tinta-2: #bfc1c8; --tinta-3: #979ba5;
+  --carbon: #a9b4f2; --carbon-suave: #262c4a;
+  --canario: #4a4320; --menta: #23402c; --cielo: #223650; --rosa: #4c2626; --gris: #2c2d31;
+  --rojo: #ff9a8f;
+}
+</style>
+<style type="text/tailwindcss">
+@theme inline {
+  --color-papel: var(--papel);
+  --color-mesa: var(--mesa);
+  --color-renglon: var(--renglon);
+  --color-tinta: var(--tinta);
+  --color-tinta-2: var(--tinta-2);
+  --color-tinta-3: var(--tinta-3);
+  --color-carbon: var(--carbon);
+  --color-carbon-suave: var(--carbon-suave);
+  --color-canario: var(--canario);
+  --color-menta: var(--menta);
+  --color-cielo: var(--cielo);
+  --color-rosa: var(--rosa);
+  --color-gris: var(--gris);
+  --color-rojo: var(--rojo);
+  --font-sans: "Public Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+@layer base {
+  html { -webkit-font-smoothing: antialiased; }
+  body { @apply bg-mesa text-tinta font-sans text-[15px] leading-normal; }
+  :focus-visible { outline: 2px solid var(--carbon); outline-offset: 2px; border-radius: 3px; }
+  .cifra { @apply font-mono tabular-nums; }
+}
+@utility hoja { @apply bg-papel rounded-md shadow-[0_0_0_1px_rgba(29,31,36,.08),0_1px_2px_rgba(29,31,36,.06),0_4px_12px_-4px_rgba(29,31,36,.10)]; }
+@utility boton { @apply inline-flex items-center justify-center gap-2 min-h-11 px-4 rounded font-semibold text-sm transition-transform duration-150 active:scale-[.97] disabled:opacity-50 disabled:cursor-not-allowed; }
+@utility boton-primario { @apply boton bg-carbon text-papel; }
+@utility boton-secundario { @apply boton text-carbon ring-1 ring-inset ring-carbon/40 bg-transparent; }
+@utility campo { @apply w-full min-h-11 rounded bg-mesa px-3 text-tinta ring-1 ring-inset ring-renglon focus:ring-2 focus:ring-carbon outline-none; }
+/* La copia del color del estado asoma por la orilla de la hoja, como en el talonario. */
+@utility copia { @apply relative; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" class="absolute" aria-hidden="true">
+  <symbol id="i-firma" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17c3-1 4-8 6-8s0 7 2 7 3-4 5-4 2 3 5 3"/><path d="M3 21h18"/></symbol>
+  <symbol id="i-mas" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-quitar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-alerta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+  <symbol id="i-ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4.5 4.5L19 7"/></symbol>
+</svg>
+
+<header class="bg-papel border-b border-renglon">
+  <div class="mx-auto max-w-6xl px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2">
+    <a href="#lista" class="font-extrabold text-xl tracking-tight text-tinta no-underline">Requi<span class="text-carbon">.</span></a>
+    <nav aria-label="Principal" class="order-last sm:order-none w-full sm:w-auto flex gap-1 text-sm font-medium whitespace-nowrap">
+      <a href="#lista" aria-current="page" class="px-3 py-2 rounded bg-carbon-suave text-carbon">Mis requisiciones</a>
+      <a href="#aprobar" class="px-3 py-2 rounded text-tinta-2 hover:text-tinta">Por aprobar</a>
+    </nav>
+    <div class="ml-auto flex items-center gap-3 text-sm">
+      <span class="hidden sm:inline text-tinta-2">Ana Pérez · Solicitante</span>
+      <button class="boton-secundario" type="button">Salir</button>
+    </div>
+  </div>
+</header>
+
+<main class="mx-auto max-w-6xl px-4 py-8 space-y-20">
+
+  <!-- ============ Pantalla 1: lista ============ -->
+  <section id="lista" aria-labelledby="t-lista">
+    <p class="font-mono text-xs text-tinta-3 border-t border-dashed border-tinta-3/50 pt-2 mb-6">Pantalla 1 · Lista de requisiciones (casos 3, 4 y 5) · datos de ejemplo</p>
+    <div class="flex flex-wrap items-end justify-between gap-4 mb-6">
+      <div>
+        <h1 id="t-lista" class="text-3xl sm:text-4xl font-extrabold tracking-tight">Mis requisiciones</h1>
+        <p class="text-tinta-2 mt-1">Lo que pediste y en qué paso va cada una.</p>
+      </div>
+      <a href="#formulario" class="boton-primario"><svg class="size-4" aria-hidden="true"><use href="#i-mas"/></svg> Nueva requisición</a>
+    </div>
+
+    <div role="status" class="mb-4 flex items-center gap-2 rounded bg-menta px-4 py-3 text-sm font-medium">
+      <svg class="size-4" aria-hidden="true"><use href="#i-ok"/></svg> REQ-000143 enviada. Necesita 2 firmas porque pasa de $20,000.
+    </div>
+
+    <ul class="space-y-3" id="folios"></ul>
+  </section>
+
+  <!-- ============ Estados ============ -->
+  <section aria-labelledby="t-estados">
+    <p class="font-mono text-xs text-tinta-3 border-t border-dashed border-tinta-3/50 pt-2 mb-6">Estados de la lista · carga, vacío, error y arranque en frío</p>
+    <h2 id="t-estados" class="sr-only">Estados</h2>
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="hoja p-5 space-y-3" aria-busy="true">
+        <p class="font-semibold text-sm">Cargando</p>
+        <div class="h-3 w-1/3 rounded bg-renglon animate-pulse motion-reduce:animate-none"></div>
+        <div class="h-3 rounded bg-renglon animate-pulse motion-reduce:animate-none"></div>
+        <div class="h-3 w-2/3 rounded bg-renglon animate-pulse motion-reduce:animate-none"></div>
+      </div>
+      <div class="hoja p-5 space-y-3">
+        <p class="font-semibold text-sm">Todavía no pides nada</p>
+        <p class="text-sm text-tinta-2">Cuando necesites material, crea una requisición con sus renglones y envíala a firma.</p>
+        <a href="#formulario" class="boton-primario">Nueva requisición</a>
+      </div>
+      <div class="hoja p-5 space-y-3 ring-1 ring-rojo/40" role="alert">
+        <p class="font-semibold text-sm text-rojo flex items-center gap-2"><svg class="size-4" aria-hidden="true"><use href="#i-alerta"/></svg> No se pudo cargar</p>
+        <p class="text-sm text-tinta-2">El servidor respondió con un error. Tus requisiciones están a salvo.</p>
+        <button class="boton-secundario" type="button">Reintentar</button>
+      </div>
+      <div class="hoja p-5 space-y-3" role="status">
+        <p class="font-semibold text-sm">Despertando la demo</p>
+        <p class="text-sm text-tinta-2">Puede tardar hasta un minuto la primera vez.</p>
+        <div class="h-1 rounded bg-renglon overflow-hidden"><div class="h-full w-1/3 bg-carbon animate-pulse motion-reduce:animate-none"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Pantalla 2: formulario ============ -->
+  <section id="formulario" aria-labelledby="t-form">
+    <p class="font-mono text-xs text-tinta-3 border-t border-dashed border-tinta-3/50 pt-2 mb-6">Pantalla 2 · Nueva requisición con renglones (caso 3) · FormArray</p>
+    <form class="hoja max-w-3xl p-6 sm:p-8 space-y-6" onsubmit="return false">
+      <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-renglon pb-4">
+        <h1 id="t-form" class="text-2xl font-extrabold tracking-tight">Nueva requisición</h1>
+        <p class="cifra text-sm text-tinta-3">Folio al enviar</p>
+      </div>
+      <label class="block space-y-1">
+        <span class="text-sm font-semibold">Proveedor</span>
+        <select class="campo"><option>Ferretería Industrial del Norte</option><option>Papelería Central</option></select>
+      </label>
+
+      <fieldset class="space-y-2">
+        <legend class="text-sm font-semibold mb-2">Renglones</legend>
+        <div class="hidden sm:grid grid-cols-[1fr_6rem_8rem_8rem_2.75rem] gap-3 text-xs font-semibold text-tinta-3 px-1">
+          <span>Producto</span><span>Cantidad</span><span class="text-right">Precio unitario</span><span class="text-right">Importe</span><span></span>
+        </div>
+        <div class="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_6rem_8rem_8rem_2.75rem] gap-3 items-center border-b border-renglon pb-3">
+          <select class="campo col-span-2 sm:col-span-1" aria-label="Producto del renglón 1"><option>Guantes de nitrilo (caja 100)</option></select>
+          <input class="campo cifra" aria-label="Cantidad del renglón 1" value="40" inputmode="numeric">
+          <span class="cifra text-right text-tinta-2">$185.00</span>
+          <span class="cifra text-right font-semibold text-carbon">$7,400.00</span>
+          <button type="button" class="boton px-0 text-tinta-3 hover:text-rojo" aria-label="Quitar renglón 1"><svg class="size-4" aria-hidden="true"><use href="#i-quitar"/></svg></button>
+        </div>
+        <div class="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_6rem_8rem_8rem_2.75rem] gap-3 items-start border-b border-renglon pb-3">
+          <select class="campo col-span-2 sm:col-span-1" aria-label="Producto del renglón 2"><option>Casco de seguridad clase E</option></select>
+          <div>
+            <input class="campo cifra ring-2 ring-rojo" aria-label="Cantidad del renglón 2" aria-invalid="true" aria-describedby="error-2" value="0" inputmode="numeric">
+            <p id="error-2" class="text-xs text-rojo mt-1">La cantidad debe ser mayor que 0.</p>
+          </div>
+          <span class="cifra text-right text-tinta-2 pt-3">$420.00</span>
+          <span class="cifra text-right text-tinta-3 pt-3">—</span>
+          <button type="button" class="boton px-0 text-tinta-3 hover:text-rojo" aria-label="Quitar renglón 2"><svg class="size-4" aria-hidden="true"><use href="#i-quitar"/></svg></button>
+        </div>
+        <button type="button" class="boton-secundario mt-1"><svg class="size-4" aria-hidden="true"><use href="#i-mas"/></svg> Agregar renglón</button>
+      </fieldset>
+
+      <div class="flex flex-wrap items-end justify-between gap-4 rounded bg-mesa p-4">
+        <div>
+          <p class="text-xs font-semibold text-tinta-3">Total estimado</p>
+          <p class="cifra text-3xl font-semibold text-carbon tracking-tight">$7,400.00</p>
+          <p class="text-xs text-tinta-3 mt-1">El total definitivo lo calcula el servidor al guardar.</p>
+        </div>
+        <div class="text-sm text-right">
+          <p class="font-semibold">Necesitará 1 firma</p>
+          <p class="text-tinta-3">Arriba de $20,000 se necesitan 2 de personas distintas.</p>
+        </div>
+      </div>
+
+      <label class="block space-y-1">
+        <span class="text-sm font-semibold">Notas para quien aprueba <span class="font-normal text-tinta-3">(opcional)</span></span>
+        <textarea class="campo py-2 min-h-20" placeholder="Para la línea 3, antes del lunes"></textarea>
+      </label>
+
+      <div class="flex flex-wrap justify-end gap-3">
+        <button class="boton-secundario" type="button">Guardar borrador</button>
+        <button class="boton-primario" type="submit">Enviar a firma</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- ============ Pantalla 3: aprobación ============ -->
+  <section id="aprobar" aria-labelledby="t-aprobar">
+    <p class="font-mono text-xs text-tinta-3 border-t border-dashed border-tinta-3/50 pt-2 mb-6">Pantalla 3 · Aprobar o rechazar (caso 4) · vista del aprobador</p>
+    <div class="grid gap-6 lg:grid-cols-[1fr_20rem] items-start">
+      <article class="hoja relative p-6 sm:p-8 space-y-6">
+        <!-- la copia canario asoma: está en firma -->
+        <div aria-hidden="true" class="absolute -z-10 inset-x-3 -bottom-2 h-6 rounded-b-md bg-canario"></div>
+        <header class="flex flex-wrap items-start justify-between gap-3 border-b border-renglon pb-4">
+          <div>
+            <p class="cifra text-sm text-tinta-3">REQ-000143 · 19 nov 2026</p>
+            <h1 id="t-aprobar" class="text-2xl font-extrabold tracking-tight">Material de seguridad, línea 3</h1>
+            <p class="text-sm text-tinta-2 mt-1">Pidió Ana Pérez · Proveedor: Ferretería Industrial del Norte</p>
+          </div>
+          <span class="rounded bg-canario px-2.5 py-1 text-sm font-semibold">En firma</span>
+        </header>
+        <table class="w-full text-sm">
+          <caption class="sr-only">Renglones de la requisición</caption>
+          <thead class="text-xs text-tinta-3 text-left"><tr><th class="font-semibold pb-2">Producto</th><th class="font-semibold pb-2 text-right">Cant.</th><th class="font-semibold pb-2 text-right">Importe</th></tr></thead>
+          <tbody class="divide-y divide-renglon">
+            <tr><td class="py-2">Guantes de nitrilo (caja 100)</td><td class="cifra text-right">40</td><td class="cifra text-right">$7,400.00</td></tr>
+            <tr><td class="py-2">Casco de seguridad clase E</td><td class="cifra text-right">25</td><td class="cifra text-right">$10,500.00</td></tr>
+            <tr><td class="py-2">Lentes de seguridad</td><td class="cifra text-right">60</td><td class="cifra text-right">$5,280.00</td></tr>
+          </tbody>
+          <tfoot><tr><td colspan="2" class="pt-4 font-semibold">Total</td><td class="cifra pt-4 text-right text-2xl font-semibold text-carbon">$23,180.00</td></tr></tfoot>
+        </table>
+
+        <!-- La firma: casillas según el monto -->
+        <div>
+          <p class="text-sm font-semibold mb-2">Firmas <span class="font-normal text-tinta-3">· 2 porque pasa de $20,000</span></p>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="rounded border border-renglon p-3 min-h-20 flex flex-col justify-between">
+              <svg class="size-8 text-carbon" aria-hidden="true"><use href="#i-firma"/></svg>
+              <p class="text-xs"><span class="font-semibold">Jorge Ruiz</span> <span class="text-tinta-3">· aprobó 19 nov, 10:42</span></p>
+            </div>
+            <div class="rounded border-2 border-dashed border-carbon/50 p-3 min-h-20 flex flex-col justify-between bg-carbon-suave/40">
+              <span class="text-xs font-semibold text-carbon">Falta tu firma</span>
+              <p class="text-xs text-tinta-3">Debe ser de otra persona</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <aside class="hoja p-5 space-y-4 lg:sticky lg:top-6" aria-label="Decisión">
+        <button class="boton-primario w-full" type="button">Aprobar y firmar</button>
+        <form class="space-y-2" onsubmit="return false">
+          <label class="block space-y-1">
+            <span class="text-sm font-semibold">Motivo del rechazo</span>
+            <textarea class="campo py-2 min-h-24 ring-2 ring-rojo" aria-invalid="true" aria-describedby="error-motivo"></textarea>
+          </label>
+          <p id="error-motivo" class="text-xs text-rojo">Para rechazar escribe el motivo: lo leerá quien la pidió.</p>
+          <button class="boton-secundario w-full text-rojo ring-rojo/50" type="submit">Rechazar</button>
+        </form>
+        <p class="text-xs text-tinta-3 border-t border-renglon pt-3">Si fuera tuya, verías: "No puedes aprobar tu propia requisición" y los botones desactivados.</p>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<script>
+  // Solo del prototipo: folios de ejemplo.
+  const estados = {
+    Draft: ["Borrador", "bg-papel ring-1 ring-inset ring-tinta-3/40 border-dashed"],
+    Submitted: ["En firma", "bg-canario"],
+    Approved: ["Aprobada", "bg-menta"],
+    OrderGenerated: ["Orden generada", "bg-cielo"],
+    Rejected: ["Rechazada", "bg-rosa"],
+  };
+  const folios = [
+    { folio: "REQ-000143", titulo: "Material de seguridad, línea 3", proveedor: "Ferretería Industrial del Norte", renglones: 3, total: "$23,180.00", estado: "Submitted", firmas: [true, false] },
+    { folio: "REQ-000141", titulo: "Tóner para impresoras de oficina", proveedor: "Papelería Central", renglones: 2, total: "$3,960.00", estado: "OrderGenerated", firmas: [true] },
+    { folio: "REQ-000139", titulo: "Refacciones de banda transportadora", proveedor: "Ferretería Industrial del Norte", renglones: 5, total: "$41,520.00", estado: "Rejected", firmas: ["rechazo"], motivo: "Falta la cotización del segundo proveedor." },
+    { folio: "Sin folio", titulo: "Pintura para señalización", proveedor: "Ferretería Industrial del Norte", renglones: 1, total: "$1,850.00", estado: "Draft", firmas: [] },
+  ];
+  const casillas = (f) => f.firmas.length === 0 ? '<span class="text-xs text-tinta-3">Sin enviar</span>' :
+    f.firmas.map((ok) => ok === "rechazo"
+      ? '<span class="grid place-items-center size-9 rounded border border-rojo/50 text-rojo" title="Rechazada"><svg class="size-4" aria-hidden="true"><use href="#i-quitar"/></svg></span>'
+      : `<span class="grid place-items-center size-9 rounded border ${ok ? "border-renglon text-carbon" : "border-2 border-dashed border-carbon/50"}" title="${ok ? "Firmada" : "Pendiente"}">${ok ? '<svg class="size-5" aria-hidden="true"><use href="#i-firma"/></svg>' : ""}</span>`).join("");
+  document.getElementById("folios").innerHTML = folios.map((f) => {
+    const [texto, clase] = estados[f.estado];
+    const firmadas = f.firmas.filter((x) => x === true).length;
+    return `<li class="hoja relative grid gap-3 p-4 sm:grid-cols-[8.5rem_1fr_auto_auto] sm:items-center sm:gap-6">
+      <span aria-hidden="true" class="absolute left-0 top-3 bottom-3 w-1.5 rounded-r ${clase.split(" ")[0]}"></span>
+      <p class="cifra text-sm text-tinta-3">${f.folio}</p>
+      <div><a href="#aprobar" class="font-semibold text-tinta no-underline hover:underline">${f.titulo}</a>
+        <p class="text-sm text-tinta-2">${f.proveedor} · ${f.renglones} ${f.renglones === 1 ? "renglón" : "renglones"}</p>
+        ${f.motivo ? `<p class="text-sm text-rojo mt-1">Rechazada: ${f.motivo}</p>` : ""}</div>
+      <div class="flex items-center gap-3"><span class="rounded px-2.5 py-1 text-xs font-semibold ${clase}">${texto}</span>
+        <span class="flex gap-1.5" aria-label="${f.estado === "Rejected" ? "Rechazada por un aprobador" : f.firmas.length ? `${firmadas} de ${f.firmas.length} firmas` : "Sin enviar"}">${casillas(f)}</span></div>
+      <p class="cifra text-lg font-semibold text-carbon sm:text-right">${f.total}</p>
+    </li>`;
+  }).join("");
+</script>
+</body>
+</html>
