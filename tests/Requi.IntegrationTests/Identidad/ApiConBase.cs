@@ -27,6 +27,9 @@ public sealed class ApiConBase : WebApplicationFactory<Program>, IAsyncLifetime
     public int LoginPorMinuto { get; init; } = 100;
 
     public static string CorreoDe(string rol) => $"{rol.ToLowerInvariant()}@requi.test";
+    public const string Aprobador2 = "aprobador2@requi.test";
+    public const string Solicitante2 = "solicitante2@requi.test";
+    public const string Mixto = "mixto@requi.test";
 
     public async ValueTask InitializeAsync()
     {
@@ -56,6 +59,20 @@ public sealed class ApiConBase : WebApplicationFactory<Program>, IAsyncLifetime
             if (!creado.Succeeded) throw new InvalidOperationException(string.Join(", ", creado.Errors.Select(e => e.Description)));
             await usuarios.AddToRoleAsync(usuario, rol);
         }
+
+        // Usuarios extra para las reglas: 2 aprobadores distintos, otro solicitante y alguien con dos roles.
+        foreach (var (correo, roles) in new[]
+        {
+            (Aprobador2, new[] { Roles.Aprobador }),
+            (Solicitante2, new[] { Roles.Solicitante }),
+            (Mixto, new[] { Roles.Solicitante, Roles.Aprobador }),
+        })
+        {
+            var usuario = new Usuario { UserName = correo, Email = correo, NombreCompleto = correo };
+            var creado = await usuarios.CreateAsync(usuario, Clave);
+            if (!creado.Succeeded) throw new InvalidOperationException(string.Join(", ", creado.Errors.Select(e => e.Description)));
+            await usuarios.AddToRolesAsync(usuario, roles);
+        }
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -64,6 +81,8 @@ public sealed class ApiConBase : WebApplicationFactory<Program>, IAsyncLifetime
         builder.UseSetting("ConnectionStrings:Database", _postgres.GetConnectionString());
         builder.UseSetting("Limites:LoginPorMinuto", LoginPorMinuto.ToString());
         builder.UseSetting("Limites:TokensPorMinuto", "1000");
+        // El Outbox se procesa a mano en las pruebas, para controlar el momento.
+        builder.UseSetting("Outbox:Activo", "false");
         // Endpoint solo de prueba para comprobar que un rol no entra a lo de otro (caso 1).
         builder.ConfigureServices(s => s.AddSingleton<IStartupFilter, EndpointsDePrueba>());
     }

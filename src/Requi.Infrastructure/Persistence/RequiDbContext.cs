@@ -67,6 +67,10 @@ public partial class RequiDbContext : DbContext
 
             entity.HasIndex(e => new { e.EntityType, e.EntityId, e.OccurredAt }, "ix_audit_events_entity");
 
+            entity.HasIndex(e => new { e.EntityType, e.EntityId, e.Seq }, "ix_audit_events_entity_seq");
+
+            entity.HasIndex(e => e.Seq, "uq_audit_events_seq").IsUnique();
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("gen_random_uuid()")
                 .HasColumnName("id");
@@ -80,6 +84,10 @@ public partial class RequiDbContext : DbContext
             entity.Property(e => e.OccurredAt)
                 .HasDefaultValueSql("now()")
                 .HasColumnName("occurred_at");
+            entity.Property(e => e.Seq)
+                .ValueGeneratedOnAdd()
+                .UseIdentityAlwaysColumn()
+                .HasColumnName("seq");
         });
 
         modelBuilder.Entity<OutboxMessage>(entity =>

@@ -5,6 +5,8 @@ using FluentValidation;
 using Requi.Api.Catalogo;
 using Requi.Api.Comun;
 using Requi.Api.Identidad;
+using Requi.Api.Outbox;
+using Requi.Api.Requisiciones;
 using Requi.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,6 +32,11 @@ builder.AddIdentidad();
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddProblemDetails();
+builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddScoped<IManejadorOutbox, CrearOrdenDeCompra>();
+builder.Services.AddScoped<IManejadorOutbox, AvisarProveedor>();
+builder.Services.AddSingleton<ProcesadorOutbox>();
+builder.Services.AddHostedService(sp => sp.GetRequiredService<ProcesadorOutbox>());
 builder.Services.AddExceptionHandler<ManejadorDeErrores>();
 
 builder.Services.AddOpenApi();
@@ -59,6 +66,8 @@ app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = c => c
 
 app.MapIdentidad();
 app.MapCatalogo();
+app.MapRequisiciones();
+app.MapOrdenes();
 
 app.Run();
 

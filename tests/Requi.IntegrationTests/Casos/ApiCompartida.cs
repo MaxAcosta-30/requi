@@ -14,9 +14,11 @@ public sealed class ApiCompartida : ICollectionFixture<ApiConBase>
 /// <summary>Un HttpClient con el access token de un rol, obtenido con el flujo OIDC real.</summary>
 public static class Sesiones
 {
-    public static async Task<HttpClient> ComoAsync(ApiConBase api, string rol)
+    public static Task<HttpClient> ComoAsync(ApiConBase api, string rol) => ComoCorreoAsync(api, ApiConBase.CorreoDe(rol));
+
+    public static async Task<HttpClient> ComoCorreoAsync(ApiConBase api, string correo)
     {
-        var tokens = await new FlujoOidc(api).IniciarSesion(ApiConBase.CorreoDe(rol));
+        var tokens = await new FlujoOidc(api).IniciarSesion(correo);
         var cliente = api.CreateClient();
         cliente.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokens.AccessToken);
         return cliente;
