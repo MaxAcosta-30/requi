@@ -4,5 +4,63 @@
     "title": "Requi.Api | v1",
     "version": "1.0.0"
   },
-  "paths": { }
+  "paths": {
+    "/api/sesion": {
+      "get": {
+        "tags": [
+          "EndpointsIdentidad"
+        ],
+        "summary": "Usuario y roles del access token actual.",
+        "operationId": "ObtenerSesion",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SesionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SesionDto": {
+        "required": [
+          "id",
+          "nombre",
+          "correo",
+          "roles"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nombre": {
+            "type": "string"
+          },
+          "correo": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "EndpointsIdentidad"
+    }
+  ]
 }

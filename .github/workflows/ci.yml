@@ -84,6 +84,9 @@ jobs:
       - name: Aplicar scripts SQL en Neon
         env:
           ConnectionStrings__Migrations: ${{ secrets.NEON_MIGRATIONS_CONNECTION }}
+          # URL del callback de Angular en Vercel (y localhost si se quiere), separadas por coma
+          Oidc__Redirecciones: ${{ vars.OIDC_REDIRECCIONES }}
+          Oidc__RedireccionesSalida: ${{ vars.OIDC_REDIRECCIONES_SALIDA }}
         run: dotnet run --project src/Requi.DbMigrator
       - name: Desplegar la API en Render
         run: curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}" > /dev/null
