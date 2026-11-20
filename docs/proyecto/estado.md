@@ -1,8 +1,6 @@
 # Estado
 
-- **Etapa:** 0 · preparación (pasos 1 a 4 hechos en `etapa-0/base-de-datos`; falta aprobación).
-- **Decisiones:** Angular 22.2 y OpenIddict 7.9 (estables al 2026-11-17). CLAUDE.md manda sobre software-maestro.
-- **Paso 3:** DbUp aplica `0001_inicial.sql` y no lo repite; el scaffold regenerado no deja diferencias.
-- **Paso 4:** API con health y OpenAPI (2 pruebas), Angular 22 zoneless con Tailwind y Vitest (verificado: vienen por defecto), `ci.yml` con revisión de scaffold.
-- **Siguiente:** Etapa 1 · despliegue temprano.
-- **Pendiente con Max:** confirmar uso de horas de Render por Hito y Semáforo antes de la Etapa 1.
+- **Etapa 0:** hecha y fusionada (PR #1).
+- **Etapa 1 · despliegue (rama `etapa-1/despliegue`, subida, sin PR):** Dockerfile, CORS por configuración, aviso de arranque en frío y job de despliegue. **Bloqueada por Max:** crear Neon, Render y Vercel y cargar los secretos (ver abajo).
+- **Etapa 2 · identidad (rama `etapa-2/identidad`, encadenada sobre la 1):** caso 1 completo: API + login en Angular, probado con 21 pruebas de integración, 11 de Angular y en navegador real (ver `02-identidad.md`). Siguiente: Etapa 3 · diseño.
+- **Pendiente con Max (Etapa 1):** secretos `NEON_MIGRATIONS_CONNECTION`, `RENDER_DEPLOY_HOOK`, `VERCEL_DEPLOY_HOOK`; variables `OIDC_REDIRECCIONES` y `OIDC_REDIRECCIONES_SALIDA`; en Render: `ConnectionStrings__Database` (pooler de Neon), `Oidc__Issuer` (URL de Render), `Oidc__CertificadoFirma`, `Oidc__CertificadoCifrado` y `Oidc__ClaveCertificados`, `Cors__Origins`; secreto `DEMO_CLAVE` en GitHub (contraseña de los usuarios de demo, mínimo 10 caracteres). Confirmar horas de Render con Hito y Semáforo.

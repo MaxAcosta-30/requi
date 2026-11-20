@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using Requi.Api.Identidad;
 using Requi.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +23,8 @@ builder.Services.AddHealthChecks()
         return true;
     });
 
+builder.AddIdentidad();
+
 builder.Services.AddOpenApi();
 
 // Solo el dominio de Vercel y localhost. Se configuran en Cors:Origins (separados por coma).
@@ -32,6 +35,10 @@ builder.Services.AddCors(o => o.AddDefaultPolicy(p => p.WithOrigins(corsOrigins)
 var app = builder.Build();
 
 app.UseCors();
+app.UseRateLimiter();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseAntiforgery();
 
 app.MapOpenApi();
 
@@ -39,6 +46,8 @@ app.MapOpenApi();
 // ready: además la base contesta.
 app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = _ => false });
 app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = c => c.Tags.Contains("ready") });
+
+app.MapIdentidad();
 
 app.Run();
 

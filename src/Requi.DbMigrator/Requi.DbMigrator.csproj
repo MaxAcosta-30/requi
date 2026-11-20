@@ -16,4 +16,8 @@
     <EmbeddedResource Include="..\..\database\scripts\*.sql" LogicalName="%(Filename)%(Extension)" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Requi.Infrastructure\Requi.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
