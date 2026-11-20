@@ -24,7 +24,14 @@ builder.Services.AddHealthChecks()
 
 builder.Services.AddOpenApi();
 
+// Solo el dominio de Vercel y localhost. Se configuran en Cors:Origins (separados por coma).
+var corsOrigins = (builder.Configuration["Cors:Origins"] ?? "")
+    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+builder.Services.AddCors(o => o.AddDefaultPolicy(p => p.WithOrigins(corsOrigins).AllowAnyHeader().AllowAnyMethod()));
+
 var app = builder.Build();
+
+app.UseCors();
 
 app.MapOpenApi();
 

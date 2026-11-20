@@ -10,7 +10,8 @@ permissions:
 
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  # En main no se cancela: un despliegue no debe cortarse a la mitad.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   backend:
@@ -69,3 +70,22 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npx ng test --watch=false
+
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [backend, database, frontend]
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+      - name: Aplicar scripts SQL en Neon
+        env:
+          ConnectionStrings__Migrations: ${{ secrets.NEON_MIGRATIONS_CONNECTION }}
+        run: dotnet run --project src/Requi.DbMigrator
+      - name: Desplegar la API en Render
+        run: curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}" > /dev/null
+      - name: Desplegar el frontend en Vercel
+        run: curl -fsS -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}" > /dev/null
