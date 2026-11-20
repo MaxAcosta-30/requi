@@ -34,7 +34,7 @@ public partial class Requisition
         ValidarDecision(aprobador);
         Approvals.Add(new Approval
         {
-            Id = Guid.NewGuid(),
+            // Sin Id: lo genera la base. Con un Id puesto, EF lo trataría como fila existente.
             RequisitionId = Id,
             ApproverId = aprobador,
             Decision = DecisionAprobacion.Aprobada,
@@ -55,7 +55,7 @@ public partial class Requisition
         }
         Approvals.Add(new Approval
         {
-            Id = Guid.NewGuid(),
+            // Sin Id: lo genera la base. Con un Id puesto, EF lo trataría como fila existente.
             RequisitionId = Id,
             ApproverId = aprobador,
             Decision = DecisionAprobacion.Rechazada,

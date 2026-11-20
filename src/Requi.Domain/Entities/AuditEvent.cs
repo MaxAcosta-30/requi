@@ -18,4 +18,6 @@ public partial class AuditEvent
     public Guid EntityId { get; set; }
 
     public string? Data { get; set; }
+
+    public long Seq { get; set; }
 }

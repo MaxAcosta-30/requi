@@ -25,10 +25,1280 @@
           }
         }
       }
+    },
+    "/api/requisiciones/{id}/historial": {
+      "get": {
+        "tags": [
+          "Requisiciones"
+        ],
+        "operationId": "HistorialRequisicion",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EventoDto"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/proveedores": {
+      "get": {
+        "tags": [
+          "Proveedores"
+        ],
+        "operationId": "ListarProveedores",
+        "parameters": [
+          {
+            "name": "activos",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProveedorDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Proveedores"
+        ],
+        "operationId": "CrearProveedor",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProveedorEntrada"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProveedorDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/proveedores/{id}": {
+      "put": {
+        "tags": [
+          "Proveedores"
+        ],
+        "operationId": "EditarProveedor",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProveedorEntrada"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProveedorDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/proveedores/{id}/desactivar": {
+      "post": {
+        "tags": [
+          "Proveedores"
+        ],
+        "operationId": "DesactivarProveedor",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/productos": {
+      "get": {
+        "tags": [
+          "Productos"
+        ],
+        "operationId": "ListarProductos",
+        "parameters": [
+          {
+            "name": "activos",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "proveedorId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductoDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Productos"
+        ],
+        "operationId": "CrearProducto",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductoEntrada"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductoDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/productos/{id}": {
+      "put": {
+        "tags": [
+          "Productos"
+        ],
+        "operationId": "EditarProducto",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductoEntrada"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductoDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/productos/{id}/desactivar": {
+      "post": {
+        "tags": [
+          "Productos"
+        ],
+        "operationId": "DesactivarProducto",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/requisiciones": {
+      "get": {
+        "tags": [
+          "Requisiciones"
+        ],
+        "operationId": "ListarRequisiciones",
+        "parameters": [
+          {
+            "name": "vista",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RequisicionDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Requisiciones"
+        ],
+        "operationId": "CrearRequisicion",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequisicionEntrada"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequisicionDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/requisiciones/{id}": {
+      "get": {
+        "tags": [
+          "Requisiciones"
+        ],
+        "operationId": "ObtenerRequisicion",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequisicionDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/requisiciones/{id}/enviar": {
+      "post": {
+        "tags": [
+          "Requisiciones"
+        ],
+        "operationId": "EnviarRequisicion",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequisicionDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/requisiciones/{id}/cancelar": {
+      "post": {
+        "tags": [
+          "Requisiciones"
+        ],
+        "operationId": "CancelarRequisicion",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequisicionDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/requisiciones/{id}/aprobar": {
+      "post": {
+        "tags": [
+          "Requisiciones"
+        ],
+        "operationId": "AprobarRequisicion",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequisicionDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/requisiciones/{id}/rechazar": {
+      "post": {
+        "tags": [
+          "Requisiciones"
+        ],
+        "operationId": "RechazarRequisicion",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RechazoEntrada"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequisicionDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ordenes": {
+      "get": {
+        "tags": [
+          "Compras"
+        ],
+        "operationId": "ListarOrdenes",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrdenDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/avisos-proveedor": {
+      "get": {
+        "tags": [
+          "Compras"
+        ],
+        "operationId": "ListarAvisosProveedor",
+        "parameters": [
+          {
+            "name": "proveedorId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AvisoDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/outbox": {
+      "get": {
+        "tags": [
+          "Compras"
+        ],
+        "operationId": "ListarMensajesOutbox",
+        "parameters": [
+          {
+            "name": "estado",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MensajeDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "AvisoDto": {
+        "required": [
+          "id",
+          "proveedorId",
+          "proveedor",
+          "ordenId",
+          "asunto",
+          "cuerpo",
+          "creadoEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "proveedorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "proveedor": {
+            "type": "string"
+          },
+          "ordenId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "asunto": {
+            "type": "string"
+          },
+          "cuerpo": {
+            "type": "string"
+          },
+          "creadoEn": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "EventoDto": {
+        "required": [
+          "fecha",
+          "actorId",
+          "accion",
+          "datos"
+        ],
+        "type": "object",
+        "properties": {
+          "fecha": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "accion": {
+            "type": "string"
+          },
+          "datos": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "FirmaDto": {
+        "required": [
+          "aprobadorId",
+          "decision",
+          "motivo",
+          "fecha"
+        ],
+        "type": "object",
+        "properties": {
+          "aprobadorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "motivo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "HttpValidationProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "detail": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "instance": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "MensajeDto": {
+        "required": [
+          "id",
+          "tipo",
+          "estado",
+          "intentos",
+          "ultimoError",
+          "ocurrioEn",
+          "procesadoEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tipo": {
+            "type": "string"
+          },
+          "estado": {
+            "type": "string"
+          },
+          "intentos": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "ultimoError": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "ocurrioEn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "procesadoEn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "OrdenDto": {
+        "required": [
+          "id",
+          "folio",
+          "requisicionId",
+          "proveedorId",
+          "proveedor",
+          "total",
+          "creadaEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "folio": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "requisicionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "proveedorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "proveedor": {
+            "type": "string"
+          },
+          "total": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "creadaEn": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ProductoDto": {
+        "required": [
+          "id",
+          "proveedorId",
+          "proveedor",
+          "sku",
+          "nombre",
+          "unidad",
+          "precioUnitario",
+          "activo"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "proveedorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "proveedor": {
+            "type": "string"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "nombre": {
+            "type": "string"
+          },
+          "unidad": {
+            "type": "string"
+          },
+          "precioUnitario": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "activo": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ProductoEntrada": {
+        "required": [
+          "proveedorId",
+          "sku",
+          "nombre",
+          "unidad",
+          "precioUnitario"
+        ],
+        "type": "object",
+        "properties": {
+          "proveedorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "nombre": {
+            "type": "string"
+          },
+          "unidad": {
+            "type": "string"
+          },
+          "precioUnitario": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          }
+        }
+      },
+      "ProveedorDto": {
+        "required": [
+          "id",
+          "nombre",
+          "correo",
+          "telefono",
+          "activo"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nombre": {
+            "type": "string"
+          },
+          "correo": {
+            "type": "string"
+          },
+          "telefono": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "activo": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ProveedorEntrada": {
+        "required": [
+          "nombre",
+          "correo",
+          "telefono"
+        ],
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string"
+          },
+          "correo": {
+            "type": "string"
+          },
+          "telefono": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "RechazoEntrada": {
+        "required": [
+          "motivo"
+        ],
+        "type": "object",
+        "properties": {
+          "motivo": {
+            "type": "string"
+          }
+        }
+      },
+      "RenglonDto": {
+        "required": [
+          "productoId",
+          "producto",
+          "cantidad",
+          "precioUnitario",
+          "importe"
+        ],
+        "type": "object",
+        "properties": {
+          "productoId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "producto": {
+            "type": "string"
+          },
+          "cantidad": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "precioUnitario": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "importe": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          }
+        }
+      },
+      "RenglonEntrada": {
+        "required": [
+          "productoId",
+          "cantidad"
+        ],
+        "type": "object",
+        "properties": {
+          "productoId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cantidad": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "RequisicionDto": {
+        "required": [
+          "id",
+          "folio",
+          "estado",
+          "proveedorId",
+          "proveedor",
+          "solicitanteId",
+          "total",
+          "notas",
+          "motivoRechazo",
+          "creadaEn",
+          "enviadaEn",
+          "firmasNecesarias",
+          "firmas",
+          "renglones"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "folio": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "estado": {
+            "type": "string"
+          },
+          "proveedorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "proveedor": {
+            "type": "string"
+          },
+          "solicitanteId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "total": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "notas": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "motivoRechazo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "creadaEn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "enviadaEn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "firmasNecesarias": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "firmas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FirmaDto"
+            }
+          },
+          "renglones": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RenglonDto"
+            }
+          }
+        }
+      },
+      "RequisicionEntrada": {
+        "required": [
+          "proveedorId",
+          "notas",
+          "renglones",
+          "enviar"
+        ],
+        "type": "object",
+        "properties": {
+          "proveedorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "notas": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "renglones": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RenglonEntrada"
+            }
+          },
+          "enviar": {
+            "type": "boolean"
+          }
+        }
+      },
       "SesionDto": {
         "required": [
           "id",
@@ -61,6 +1331,18 @@
   "tags": [
     {
       "name": "EndpointsIdentidad"
+    },
+    {
+      "name": "Requisiciones"
+    },
+    {
+      "name": "Proveedores"
+    },
+    {
+      "name": "Productos"
+    },
+    {
+      "name": "Compras"
     }
   ]
 }

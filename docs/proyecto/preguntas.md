@@ -9,3 +9,8 @@
 1. ¿Por qué el total se recalcula en el servidor aunque Angular ya lo muestre?
 2. Una requisición de $30,000 tiene una aprobación y el segundo aprobador la rechaza. ¿En qué estado queda y por qué?
 3. ¿Por qué las reglas viven en una clase `partial` y no en el archivo de la entidad?
+
+## Outbox (casos 5 y 6)
+1. ¿Qué garantiza que la orden de compra no se pierda si la API se apaga justo después de aprobar?
+2. ¿Qué hace `FOR UPDATE SKIP LOCKED` y qué pasaría sin `SKIP LOCKED` con dos instancias?
+3. El mismo mensaje se procesa dos veces. ¿Por qué no se duplica la orden? Nombra las dos defensas.
