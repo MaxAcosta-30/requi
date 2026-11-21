@@ -8,8 +8,23 @@ using Requi.Api.Identidad;
 using Requi.Api.Outbox;
 using Requi.Api.Requisiciones;
 using Requi.Infrastructure.Persistence;
+using Serilog;
+using Serilog.Context;
+using Serilog.Events;
+using Serilog.Formatting.Compact;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Logs en JSON compacto a la consola (Render los recoge de ahí). Los niveles salen de Serilog:MinimumLevel.
+// ReadFrom.Services deja que las pruebas registren su propio sink en el contenedor.
+builder.Host.UseSerilog((contexto, servicios, log) => log
+    .ReadFrom.Configuration(contexto.Configuration)
+    // Fijo en código y después de la configuración (gana el último): en Debug/Verbose,
+    // OpenIddict escribe un fragmento del refresh token. Ninguna variable puede bajarlo.
+    .MinimumLevel.Override("OpenIddict", Serilog.Events.LogEventLevel.Warning)
+    .ReadFrom.Services(servicios)
+    .Enrich.FromLogContext()
+    .WriteTo.Console(new RenderedCompactJsonFormatter()));
 
 // La cadena se lee al crear el contexto, no al arrancar: así el documento OpenAPI
 // se genera en el build sin base de datos, y /health/ready reporta si falta.
@@ -47,6 +62,25 @@ var corsOrigins = (builder.Configuration["Cors:Origins"] ?? "")
 builder.Services.AddCors(o => o.AddDefaultPolicy(p => p.WithOrigins(corsOrigins).AllowAnyHeader().AllowAnyMethod()));
 
 var app = builder.Build();
+
+// TraceId en todo evento del request, incluido el error que registra el manejador de excepciones.
+app.Use(async (http, siguiente) =>
+{
+    using (LogContext.PushProperty("TraceId", http.TraceIdentifier))
+        await siguiente(http);
+});
+
+// Una línea por request: método, ruta (Request.Path, SIN querystring), estado y duración.
+// No registra encabezados, cookies ni cuerpos. Los health checks bajan a Debug para no llenar el log.
+// Logger del contenedor y no el estático: así cada host (y cada host de pruebas) usa el suyo.
+app.UseSerilogRequestLogging(o =>
+{
+    o.Logger = app.Services.GetRequiredService<Serilog.ILogger>();
+    o.GetLevel = (http, _, error) =>
+        error is not null || http.Response.StatusCode >= 500 ? LogEventLevel.Error
+        : http.Request.Path.StartsWithSegments("/health") ? LogEventLevel.Debug
+        : LogEventLevel.Information;
+});
 
 app.UseExceptionHandler();
 app.UseStatusCodePages();

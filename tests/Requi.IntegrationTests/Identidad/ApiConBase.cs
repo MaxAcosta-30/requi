@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using OpenIddict.Abstractions;
 using Requi.Infrastructure.Identity;
+using Serilog.Core;
 using Testcontainers.PostgreSql;
 
 namespace Requi.IntegrationTests.Identidad;
@@ -21,10 +22,16 @@ public sealed class ApiConBase : WebApplicationFactory<Program>, IAsyncLifetime
     public const string Redireccion = "http://localhost:4200/callback";
     public const string Clave = "Clave-de-prueba-123";
 
+    /// <summary>Todo lo que la API registra con Serilog, en JSON compacto, para revisar que no haya secretos.</summary>
+    public LogsEnMemoria Logs { get; } = new();
+
     private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder("postgres:17-alpine").Build();
 
     /// <summary>Límite de intentos de login por minuto (las pruebas de límite usan uno bajo).</summary>
     public int LoginPorMinuto { get; init; } = 100;
+
+    /// <summary>Si se fija, sube todos los niveles de Serilog (incluido OpenIddict) para probar que el código los contiene.</summary>
+    public string? NivelDeLogs { get; init; }
 
     public static string CorreoDe(string rol) => $"{rol.ToLowerInvariant()}@requi.test";
     public const string Aprobador2 = "aprobador2@requi.test";
@@ -83,8 +90,17 @@ public sealed class ApiConBase : WebApplicationFactory<Program>, IAsyncLifetime
         builder.UseSetting("Limites:TokensPorMinuto", "1000");
         // El Outbox se procesa a mano en las pruebas, para controlar el momento.
         builder.UseSetting("Outbox:Activo", "false");
+        if (NivelDeLogs is not null)
+        {
+            builder.UseSetting("Serilog:MinimumLevel:Default", NivelDeLogs);
+            builder.UseSetting("Serilog:MinimumLevel:Override:OpenIddict", NivelDeLogs);
+        }
         // Endpoint solo de prueba para comprobar que un rol no entra a lo de otro (caso 1).
-        builder.ConfigureServices(s => s.AddSingleton<IStartupFilter, EndpointsDePrueba>());
+        builder.ConfigureServices(s =>
+        {
+            s.AddSingleton<IStartupFilter, EndpointsDePrueba>();
+            s.AddSingleton<ILogEventSink>(Logs);
+        });
     }
 
     public override async ValueTask DisposeAsync()
