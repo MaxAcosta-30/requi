@@ -6,4 +6,4 @@
 - **Estados:** carga, vacío, error con "Reintentar" y sin permisos (`features/compras/estado.ts`). Textos en es y en.
 - **Corregido al probar en el navegador:** a 390 px el menú desbordaba (554 px) por `whitespace-nowrap` sin `flex-wrap`; los componentes de sección eran *inline* y `space-y-12` no separaba. Enlaces del menú a 44 px de alto.
 - **Verificado en local (API + Postgres + `ng serve`, 390 px):** las 4 pantallas como Compras con datos reales; SKU repetido → 409 con su mensaje; producto válido → 201 y aparece; el solicitante ve "solo para Compras"; axe 0. 29 pruebas de Angular y build sin avisos.
-- **Pendiente:** e2e de Playwright en el CI; `AvisoDto` no trae el folio de la orden (se muestra el inicio del id).
+- **Pendiente:** `AvisoDto` no trae el folio de la orden (se muestra el inicio del id).
