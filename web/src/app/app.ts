@@ -17,6 +17,13 @@ export class App {
   private readonly i18n = inject(TranslocoService);
   protected readonly idioma = toSignal(this.i18n.langChanges$, { initialValue: this.i18n.getActiveLang() });
 
+  protected readonly enlacesCompras = [
+    { ruta: '/compras/catalogo', clave: 'app.nav.catalogo' },
+    { ruta: '/compras/ordenes', clave: 'app.nav.ordenes' },
+    { ruta: '/compras/avisos', clave: 'app.nav.avisos' },
+    { ruta: '/compras/mensajes', clave: 'app.nav.mensajes' },
+  ];
+
   constructor() {
     this.api.check();
 

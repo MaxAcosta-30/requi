@@ -70,3 +70,71 @@ export class ErrorApi extends Error {
 
 /** Arriba de este monto se necesitan 2 firmas (la API es la que decide; esto solo anticipa). */
 export const LIMITE_UNA_FIRMA = 20_000;
+
+// Compras: catálogo completo (con inactivos), órdenes, bandeja del proveedor y Outbox.
+
+export interface ProveedorAdmin {
+  id: string;
+  nombre: string;
+  correo: string;
+  telefono: string | null;
+  activo: boolean;
+}
+
+export interface ProveedorEntrada {
+  nombre: string;
+  correo: string;
+  telefono: string | null;
+}
+
+export interface ProductoAdmin {
+  id: string;
+  proveedorId: string;
+  proveedor: string;
+  sku: string;
+  nombre: string;
+  unidad: string;
+  precioUnitario: number;
+  activo: boolean;
+}
+
+export interface ProductoEntrada {
+  proveedorId: string;
+  sku: string;
+  nombre: string;
+  unidad: string;
+  precioUnitario: number;
+}
+
+export interface Orden {
+  id: string;
+  folio: number;
+  requisicionId: string;
+  proveedorId: string;
+  proveedor: string;
+  total: number;
+  creadaEn: Date;
+}
+
+export interface Aviso {
+  id: string;
+  proveedorId: string;
+  proveedor: string;
+  ordenId: string;
+  asunto: string;
+  cuerpo: string;
+  creadoEn: Date;
+}
+
+/** Valores reales del Outbox en la API. */
+export type EstadoMensaje = 'Pending' | 'Processed' | 'Failed';
+
+export interface Mensaje {
+  id: string;
+  tipo: string;
+  estado: string;
+  intentos: number;
+  ultimoError: string | null;
+  ocurrioEn: Date;
+  procesadoEn: Date | null;
+}
