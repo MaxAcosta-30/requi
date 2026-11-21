@@ -4,6 +4,7 @@ import { usuarioDesdeClaims } from './sesion';
 describe('usuarioDesdeClaims', () => {
   it('lee nombre, correo y un rol suelto', () => {
     expect(usuarioDesdeClaims({ sub: '1', name: 'Ana', email: 'a@r.test', role: 'Compras' })).toEqual({
+      id: '1',
       nombre: 'Ana',
       correo: 'a@r.test',
       roles: ['Compras'],

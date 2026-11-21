@@ -12,3 +12,7 @@ node_modules/
 dist/
 coverage/
 TestResults/
+
+# impeccable: caché y ajustes locales (config.json sí va al repo)
+.impeccable/hook.cache.json
+.impeccable/config.local.json

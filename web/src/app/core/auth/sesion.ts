@@ -4,6 +4,7 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 export type Rol = 'Solicitante' | 'Aprobador' | 'Compras';
 
 export interface Usuario {
+  id: string;
   nombre: string;
   correo: string;
   roles: Rol[];
@@ -17,6 +18,7 @@ export function usuarioDesdeClaims(claims: Record<string, unknown> | null | unde
   const crudos = claims['role'];
   const lista = Array.isArray(crudos) ? crudos : crudos === undefined ? [] : [crudos];
   return {
+    id: claims['sub'],
     nombre: typeof claims['name'] === 'string' ? claims['name'] : '',
     correo: typeof claims['email'] === 'string' ? claims['email'] : '',
     roles: lista.filter((r): r is Rol => ROLES.includes(r as Rol)),
