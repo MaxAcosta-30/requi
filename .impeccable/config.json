@@ -1,0 +1,35 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "docs/diseno/prototipo.html"
+        ],
+        "createdAt": "2026-11-21T02:23:27.201Z",
+        "reason": "Es --mesa, el escritorio bajo la hoja del mundo Papel autocopiante (07-diseno.md)."
+      },
+      {
+        "rule": "nested-cards",
+        "value": "*",
+        "files": [
+          "docs/diseno/prototipo.html"
+        ],
+        "createdAt": "2026-11-21T02:23:27.209Z",
+        "reason": "Son las casillas de firma impresas en la hoja: el elemento firma de la dirección."
+      },
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "docs/diseno/prototipo.html"
+        ],
+        "createdAt": "2026-11-21T02:23:27.216Z",
+        "reason": "Falso positivo estático: el análisis no ejecuta Tailwind; renderizado h1 = 30-36 px, cuerpo 15 px."
+      }
+    ]
+  }
+}
