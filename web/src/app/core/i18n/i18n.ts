@@ -42,3 +42,13 @@ export class FechaPipe implements PipeTransform {
     return new Intl.DateTimeFormat(LOCALE[this.idioma() as Idioma] ?? 'es-MX', { dateStyle: 'medium' }).format(valor);
   }
 }
+
+/** Fecha y hora cortas con el formato del idioma activo. */
+@Pipe({ name: 'fechaHora', pure: false })
+export class FechaHoraPipe implements PipeTransform {
+  private readonly idioma = toSignal(inject(TranslocoService).langChanges$, { initialValue: 'es' });
+  transform(valor: Date | null | undefined): string {
+    if (!valor) return '—';
+    return new Intl.DateTimeFormat(LOCALE[this.idioma() as Idioma] ?? 'es-MX', { dateStyle: 'medium', timeStyle: 'short' }).format(valor);
+  }
+}

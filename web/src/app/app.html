@@ -2,13 +2,18 @@
   <div class="mx-auto max-w-6xl px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2">
     <a routerLink="/" class="font-extrabold text-xl tracking-tight text-tinta no-underline">Requi<span class="text-carbon">.</span></a>
     @if (sesion.usuario(); as usuario) {
-      <nav aria-label="Principal" class="order-last sm:order-none w-full sm:w-auto flex gap-1 text-sm font-medium whitespace-nowrap">
-        <a routerLink="/" routerLinkActive="bg-carbon-suave text-carbon" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" class="px-3 py-2 rounded text-tinta-2">{{ 'app.nav.mias' | transloco }}</a>
+      <nav aria-label="Principal" class="order-last sm:order-none w-full sm:w-auto flex flex-wrap gap-1 text-sm font-medium whitespace-nowrap">
+        <a routerLink="/" routerLinkActive="bg-carbon-suave text-carbon" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" class="inline-flex items-center min-h-11 px-3 rounded text-tinta-2">{{ 'app.nav.mias' | transloco }}</a>
         @if (sesion.tieneRol('Aprobador')) {
-          <a routerLink="/por-aprobar" routerLinkActive="bg-carbon-suave text-carbon" ariaCurrentWhenActive="page" class="px-3 py-2 rounded text-tinta-2">{{ 'app.nav.porAprobar' | transloco }}</a>
+          <a routerLink="/por-aprobar" routerLinkActive="bg-carbon-suave text-carbon" ariaCurrentWhenActive="page" class="inline-flex items-center min-h-11 px-3 rounded text-tinta-2">{{ 'app.nav.porAprobar' | transloco }}</a>
         }
         @if (sesion.tieneRol('Compras') || sesion.tieneRol('Aprobador')) {
-          <a routerLink="/todas" routerLinkActive="bg-carbon-suave text-carbon" ariaCurrentWhenActive="page" class="px-3 py-2 rounded text-tinta-2">{{ 'app.nav.todas' | transloco }}</a>
+          <a routerLink="/todas" routerLinkActive="bg-carbon-suave text-carbon" ariaCurrentWhenActive="page" class="inline-flex items-center min-h-11 px-3 rounded text-tinta-2">{{ 'app.nav.todas' | transloco }}</a>
+        }
+        @if (sesion.tieneRol('Compras')) {
+          @for (e of enlacesCompras; track e.ruta) {
+            <a [routerLink]="e.ruta" routerLinkActive="bg-carbon-suave text-carbon" ariaCurrentWhenActive="page" class="inline-flex items-center min-h-11 px-3 rounded text-tinta-2">{{ e.clave | transloco }}</a>
+          }
         }
       </nav>
     }
