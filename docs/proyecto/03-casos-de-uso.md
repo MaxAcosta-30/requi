@@ -1,6 +1,6 @@
 # Casos de uso
 
-Estado al 20 de noviembre de 2026. Todos los PR (#2 a #8) siguen en borrador y solo el #1 (etapa 0) está fusionado, así que ningún caso está "cumplido con PR fusionado". El e2e de Playwright aún no está en el CI (hoy es un script local); NO VERIFICADO que exista en el repositorio: no hay `tests/e2e/`.
+Estado al 20 de noviembre de 2026. Todos los PR (#2 a #8) siguen en borrador y solo el #1 (etapa 0) está fusionado, así que ningún caso está "cumplido con PR fusionado". El e2e de Playwright (`tests/e2e/`, ver `10-e2e.md`) pasó en verde en local; su job `e2e` del CI aún no se ha ejecutado en GitHub: NO VERIFICADO.
 
 ## Caso 1 · Iniciar sesión con OIDC (Debe)
 - **Actor:** cualquier usuario · **Permiso:** ninguno para entrar; cada endpoint exige su rol.
@@ -10,7 +10,7 @@ Estado al 20 de noviembre de 2026. Todos los PR (#2 a #8) siguen en borrador y s
 - **Errores y casos límite:** sin PKCE o con `plain` se rechaza; verificador distinto no canjea; login sin antiforgery se rechaza; bloqueo tras 5 intentos; 429 por límite; refresh token reutilizado revoca la sesión.
 - **Criterio de aceptación:** Authorization Code + PKCE; access token de 10 minutos; refresh token rotado, y si se reutiliza uno viejo se revoca la sesión; una prueba comprueba que un rol no puede usar endpoints de otro.
 - **Pruebas:** `tests/Requi.IntegrationTests/Identidad/IdentidadTests.cs` (flujo, PKCE, rotación, reutilización, rol contra endpoint ajeno, 429); `tests/Requi.IntegrationTests/Identidad/LogsSinSecretosTests.cs`; `web/src/app/core/auth/sesion.spec.ts`; `web/src/app/app.spec.ts`.
-- **Estado:** cumplido en rama, PR #3 en borrador (sin fusionar). El e2e de Playwright no está en el CI.
+- **Estado:** cumplido en rama, PR #3 en borrador (sin fusionar). E2E: `tests/e2e/flujo.spec.ts` (login real).
 
 ## Caso 2 · Administrar productos y proveedores (Debe)
 - **Actor:** Compras (escribe); los demás roles leen · **Permiso:** rol Compras para crear, editar y desactivar.
@@ -29,7 +29,7 @@ Estado al 20 de noviembre de 2026. Todos los PR (#2 a #8) siguen en borrador y s
 - **Flujo:** 1. Elige proveedor y agrega renglones (`FormArray`). 2. El servidor toma el precio del catálogo y calcula el total. 3. Guarda como borrador o envía.
 - **Errores y casos límite:** producto de otro proveedor se rechaza; el precio no lo pone el cliente; sin renglones no se envía; cantidad 0, negativa o decimal y producto repetido son inválidos en el formulario; otro solicitante no ve ni cancela lo ajeno.
 - **Criterio de aceptación:** Renglones dinámicos con Reactive Forms (`FormArray`); el total se calcula en el servidor; se guarda como borrador o se envía.
-- **Pruebas:** `tests/Requi.UnitTests/ReglasDeRequisicionTests.cs`; `tests/Requi.IntegrationTests/Casos/RequisicionesTests.cs`; `web/src/app/features/requisiciones/nueva.spec.ts`; `web/src/app/repositories/requisiciones.spec.ts`.
+- **Pruebas:** `tests/Requi.UnitTests/ReglasDeRequisicionTests.cs`; `tests/Requi.IntegrationTests/Casos/RequisicionesTests.cs`; `web/src/app/features/requisiciones/nueva.spec.ts`; `web/src/app/repositories/requisiciones.spec.ts`. E2E: `tests/e2e/flujo.spec.ts`.
 - **Estado:** cumplido en rama (dominio PR #4, API PR #6, pantallas PR #7), en borrador.
 
 ## Caso 4 · Aprobar o rechazar (Debe)
@@ -39,7 +39,7 @@ Estado al 20 de noviembre de 2026. Todos los PR (#2 a #8) siguen en borrador y s
 - **Flujo:** 1. El aprobador abre "por aprobar". 2. Aprueba o rechaza (con motivo). 3. Con el total y las firmas se decide si pasa a Aprobada.
 - **Errores y casos límite:** hasta $20,000 basta 1 firma, arriba 2 distintas; el mismo aprobador no cuenta dos veces; nadie decide sobre lo suyo; rechazar sin motivo es 400; transición inválida es 409 con `ProblemDetails`.
 - **Criterio de aceptación:** Hasta $20,000 MXN basta 1 aprobación; arriba de $20,000 se necesitan 2 de aprobadores distintos; nadie aprueba su propia requisición; rechazar exige motivo.
-- **Pruebas:** `tests/Requi.UnitTests/ReglasDeRequisicionTests.cs`; `tests/Requi.IntegrationTests/Casos/RequisicionesTests.cs`.
+- **Pruebas:** `tests/Requi.UnitTests/ReglasDeRequisicionTests.cs`; `tests/Requi.IntegrationTests/Casos/RequisicionesTests.cs`. E2E: `tests/e2e/flujo.spec.ts`.
 - **Estado:** cumplido en rama (PR #4, #6 y #7), en borrador.
 
 ## Caso 5 · Generar la orden de compra (Debe)
@@ -49,7 +49,7 @@ Estado al 20 de noviembre de 2026. Todos los PR (#2 a #8) siguen en borrador y s
 - **Flujo:** 1. Al aprobar, `RequisicionAprobada` se guarda en el Outbox en la misma transacción. 2. `ProcesadorOutbox` toma el mensaje con `FOR UPDATE SKIP LOCKED`. 3. Crea la orden y marca el mensaje.
 - **Errores y casos límite:** procesar dos veces no duplica (comprobación más restricción única); dos procesadores no toman el mismo mensaje.
 - **Criterio de aceptación:** Al quedar aprobada, el evento se guarda en el Outbox en la misma transacción; el procesador crea la orden una sola vez aunque el evento se procese dos veces.
-- **Pruebas:** `tests/Requi.IntegrationTests/Casos/RequisicionesTests.cs` (idempotencia, dos procesadores, flujo completo); `web/src/app/repositories/compras.spec.ts`. Procesar al arrancar los pendientes: NO VERIFICADO con prueba.
+- **Pruebas:** `tests/Requi.IntegrationTests/Casos/RequisicionesTests.cs` (idempotencia, dos procesadores, flujo completo); `web/src/app/repositories/compras.spec.ts`. Procesar al arrancar los pendientes: NO VERIFICADO con prueba. E2E: `tests/e2e/flujo.spec.ts`.
 - **Estado:** cumplido en rama (PR #6 y #8), en borrador.
 
 ## Caso 6 · Avisar al proveedor (Debe)
@@ -59,7 +59,7 @@ Estado al 20 de noviembre de 2026. Todos los PR (#2 a #8) siguen en borrador y s
 - **Flujo:** 1. `OrdenGenerada` crea el segundo evento. 2. Su manejador deja el aviso en `/api/avisos-proveedor`. 3. Si falla, se reintenta (5, 10, 20, 40 s).
 - **Errores y casos límite:** al quinto fallo queda `Failed` y visible en `/api/outbox?estado=Failed`; reprocesar no duplica el aviso.
 - **Criterio de aceptación:** La orden genera un segundo evento que deja el aviso en la bandeja del proveedor; los fallos se reintentan y, tras 5 intentos, el mensaje queda marcado como fallido y visible.
-- **Pruebas:** `tests/Requi.IntegrationTests/Casos/RequisicionesTests.cs`; `web/src/app/repositories/compras.spec.ts` (mensajes con filtro de estado).
+- **Pruebas:** `tests/Requi.IntegrationTests/Casos/RequisicionesTests.cs`; `web/src/app/repositories/compras.spec.ts` (mensajes con filtro de estado). E2E: `tests/e2e/flujo.spec.ts`.
 - **Estado:** cumplido en rama (PR #6 y #8), en borrador.
 
 ## Caso 7 · Consultar el historial (Debe)

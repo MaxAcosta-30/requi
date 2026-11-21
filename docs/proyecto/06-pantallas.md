@@ -7,4 +7,4 @@
 - **Fuentes** autoalojadas con @fontsource (Public Sans Variable y JetBrains Mono).
 - **Verificado en navegador real (local):** solicitante crea y envía una requisición de $22,850 (aviso "2 firmas") → aprobador 1 firma (1 de 2) → cambio a inglés sin recargar → aprobador 2 firma → el Outbox genera la orden OC-000001 y el aviso al proveedor → Compras la ve como "Orden generada". axe 0 en lista, nueva y detalle (claro/oscuro, 1440/390).
 - **Pruebas de Angular:** 21 (repositorios con `HttpTestingController`, formulario, traducciones, app).
-- **Pendiente:** pantallas de Compras para catálogo, órdenes, bandeja del proveedor y mensajes fallidos (la API ya existe); el e2e de Playwright en el CI (hoy es un script local).
+- **Pendiente:** pantallas de Compras para catálogo, órdenes, bandeja del proveedor y mensajes fallidos (la API ya existe).
